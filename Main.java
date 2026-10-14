@@ -4,6 +4,7 @@ public class Main {
     private static final Scanner scanner = new Scanner(System.in);
 
     public static void main(String[] args) {
+        ComplexMatrix lastResult = null;
         while (true) {
             System.out.println("\nМАТРИЦЫ КОМПЛЕКСНЫХ ЧИСЕЛ");
             System.out.println("1. cложить две матрицы");
@@ -11,6 +12,8 @@ public class Main {
             System.out.println("3. разделить две матрицы");
             System.out.println("4. транспонировать матрицу");
             System.out.println("5. вычислить определитель");
+            System.out.println("6. применить операцию к последнему результату");
+            System.out.println("7. показать последний результат");
             System.out.println("0. выход");
             System.out.print("выберите операцию: ");
 
@@ -25,29 +28,33 @@ public class Main {
                 if (choice == 1) {
                     ComplexMatrix a = readMatrix("первой");
                     ComplexMatrix b = readMatrix("второй");
+                    lastResult = a.add(b);
 
                     System.out.println("Результат:");
-                    System.out.println(a.add(b));
+                    System.out.println(lastResult);
 
                 } else if (choice == 2) {
                     ComplexMatrix a = readMatrix("первой");
                     ComplexMatrix b = readMatrix("второй");
+                    lastResult = a.multiply(b);
 
                     System.out.println("Результат:");
-                    System.out.println(a.multiply(b));
+                    System.out.println(lastResult);
 
                 } else if (choice == 3) {
                     ComplexMatrix a = readMatrix("первой");
                     ComplexMatrix b = readMatrix("второй");
+                    lastResult = a.divide(b);
 
                     System.out.println("Результат:");
-                    System.out.println(a.divide(b));
+                    System.out.println(lastResult);
 
                 } else if (choice == 4) {
                     ComplexMatrix a = readMatrix("");
+                    lastResult = a.transpose();
 
                     System.out.println("транспонированная матрица:");
-                    System.out.println(a.transpose());
+                    System.out.println(lastResult);
 
                 } else if (choice == 5) {
                     ComplexMatrix a = readMatrix("");
@@ -56,10 +63,23 @@ public class Main {
                             "определитель: " + a.determinant()
                     );
 
+                } else if (choice == 6) {
+                    lastResult = applyToLastResult(lastResult);
+                    if (lastResult != null) {
+                        System.out.println("новый результат:");
+                        System.out.println(lastResult);
+                    }
+
+                } else if (choice == 7) {
+                    if (lastResult == null) {
+                        System.out.println("последний результат не сохранен");
+                    } else {
+                        System.out.println("последний результат:");
+                        System.out.println(lastResult);
+                    }
+
                 } else {
-                    System.out.println(
-                            "такой операции нет."
-                    );
+                    System.out.println("такой операции нет");
                 }
 
             } catch (IllegalArgumentException | ArithmeticException e) {
@@ -70,6 +90,34 @@ public class Main {
         }
 
         scanner.close();
+    }
+
+    private static ComplexMatrix applyToLastResult(ComplexMatrix lastResult) {
+        if (lastResult == null) {
+            System.out.println("cначала выполните операцию 1-4");
+            return null;
+        }
+
+        System.out.println("Текущий результат:");
+        System.out.println(lastResult);
+
+        System.out.println("1. прибавить   2. умножить   3. транспонировать   0. отмена");
+        System.out.print("выберите: ");
+
+        int action = readInt();
+
+        if (action == 1) {
+            ComplexMatrix c = readMatrix("матрицы для прибавления");
+            return lastResult.add(c);
+        } else if (action == 2) {
+            ComplexMatrix c = readMatrix("матрицы для умножения");
+            return lastResult.multiply(c);
+        } else if (action == 3) {
+            return lastResult.transpose();
+        }
+
+        System.out.println("операция отменена");
+        return lastResult;
     }
 
     private static ComplexMatrix readMatrix(String order) {         //считывает матрицу у пользователя
